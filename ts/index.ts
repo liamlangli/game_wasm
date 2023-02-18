@@ -3,7 +3,7 @@ import { wasm_load } from "./wasm";
 
 let driver: Driver;
 async function main() {
-    const module = await wasm_load('jump.wasm', 4);
+    const module = await wasm_load('wasm/jump.wasm', 4);
     const canvas = document.getElementById('view') as HTMLCanvasElement;
     driver = new Driver(module, canvas);
     console.log(driver);
