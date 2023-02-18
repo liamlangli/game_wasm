@@ -13,7 +13,7 @@ Remaster old school games with WebAssembly.
     `cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_PROJECTS="lld" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" ../llvm`
     `make && make install`
 
-- Build example [run dev server and listen at port 3000]
+- Build example [run dev server and listen at port 3000]   
     `git clone git@github.com:liamlangli/game_wasm.git`    
     `cd game_wasm`   
     `make`
