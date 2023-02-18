@@ -1,0 +1,15 @@
+{
+  "name": "game_wasm",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "lang <lilang8936@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.8",
+    "typescript": "^4.9.5"
+  }
+}
