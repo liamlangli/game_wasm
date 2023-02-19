@@ -18,10 +18,29 @@
         align-items: center;
         justify-content: center;
         background-color: #21262b;
+        flex-direction: column;
+    }
+
+    #view {
+        cursor: none;
+    }
+
+    select {
+        margin-top: 20px;
+        min-width: 120px;
+        height: 32px;
+        background-color: #21262b;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
     }
 </style>
 <body>
     <canvas id="view"></canvas>
+    <select id="image-select">
+        <option value="editor.wasm">editor</option>
+        <option value="jump.wasm">example/jump</option>
+    </select>
 </body>
 <script src="index.js"></script>
 </html>

@@ -3,7 +3,7 @@ import { wasm_load } from "./wasm";
 
 let driver: Driver;
 async function main() {
-    const module = await wasm_load('wasm/jump.wasm', 4);
+    const module = await wasm_load('wasm/editor.wasm', 8);
     const canvas = document.getElementById('view') as HTMLCanvasElement;
     driver = new Driver(module, canvas);
     console.log(driver);
@@ -12,7 +12,6 @@ async function main() {
     (window as any).driver = driver;
     tick();
 }
-
 
 let loop_flag = -1;
 let last_time = performance.now();

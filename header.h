@@ -36,7 +36,7 @@ enum Button {
 };
 
 typedef struct {
-    u16 video_memory[FRAME_BUFFER_SIZE];
+    u32 video_memory[FRAME_BUFFER_SIZE]; // [r, g, b, d] 8 bits per channel
     u16 buttons; // bit set
     u8 mouse[2];
     f32 trigger[2];
@@ -45,28 +45,21 @@ typedef struct {
 } game_instance;
 
 /** ----- game api ----- */
-void init();
+void            init(u64 memory_base);
 
 game_instance*  instance_get();
 
-void*           heap_memory_pointer();
-u16*            video_memory_pointer();
-
 u64             video_memory_address();
-u64             heap_memory_address();
 
 void            update_trigger(f32 l, f32 r);
 void            update_mouse(u8 x, u8 y);
 void            update_button(u16 buttons);
 
-
-// 5bit red, 5bit green, 5bit blue
-u16             color_pack(u8 r, u8 g, u8 b);
-void            screen_clear(u16 color);
-void            pixel_color_set(u8 x, u8 y, u16 color);
-void            rect_color_set(u8 x, u8 y, u8 w, u8 h, u16 color);
-void            rect_color_stroke(u8 x, u8 y, u8 w, u8 h, u8 line_width, u16 color);
-
+u32             pixel_pack(u8 r, u8 g, u8 b, u8 d);
+void            screen_clear(u32 pixel);
+void            pixel_color_set(u8 x, u8 y, u32 color);
+void            rect_color_set(u8 x, u8 y, u8 w, u8 h, u32 pixel);
+void            rect_color_stroke(u8 x, u8 y, u8 w, u8 h, u8 line_width, u32 pixel);
 
 void            sprite_draw(u8 x, u8 y, u8 sprite_index, u8 size, u8 flip);
 // void           palette_set(u16* palette, u8 start, u8 count);

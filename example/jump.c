@@ -19,8 +19,6 @@ void start() {
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
-u8 tiles[TILE_COUNT_Y][TILE_COUNT_X];
-
 u8 clamp(u8 i, u8 b, u8 t) {
     return min(max(i, b), t);
 }
@@ -34,11 +32,11 @@ const f32 gravity = 980.f;
 f32 velocity = 0.f;
 
 void update(f32 dt) {
-    screen_clear(color_pack(2, 3, 2));
+    screen_clear(pixel_pack(4, 4, 8, 255));
+    u32 grid_pixel = pixel_pack(16, 16, 16, 255);
     for (u8 y = 0; y < TILE_COUNT_Y; y++) {
         for (u8 x = 0; x < TILE_COUNT_X; x++) {
-            u8 tile = tiles[y][x];
-            rect_color_stroke(x << 4, y << 4, TILE_SIZE, TILE_SIZE, 1, color_pack(8, 8, 8));
+            rect_color_stroke(x << 4, y << 4, TILE_SIZE, TILE_SIZE, 1, grid_pixel);
         }
     }
 
@@ -67,5 +65,6 @@ void update(f32 dt) {
         size_y = 8;
     }
 
-    rect_color_set(pos_x + ((8 - size_x)), pos_y, size_x, size_y, color_pack(31, 31, 31));
+    u32 player_pixel = pixel_pack(255, 255, 255, 255);
+    rect_color_set(pos_x + ((8 - size_x)), pos_y, size_x, size_y, player_pixel);
 }

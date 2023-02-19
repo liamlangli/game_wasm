@@ -2,7 +2,7 @@ import * as esbuild from 'esbuild';
 
 // Start esbuild's server on a random local port
 let ctx = await esbuild.context({
-    entryPoints: ['ts/index.ts'],
+    entryPoints: ['driver/index.ts'],
     outdir: 'public',
     bundle: true,
     sourcemap: true,
