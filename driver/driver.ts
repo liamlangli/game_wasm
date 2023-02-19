@@ -57,20 +57,21 @@ void main() {
 `;
 
 export class Driver {
-    memory: WebAssembly.Memory;
+    private module?: WebAssemblyModule;
+    memory?: WebAssembly.Memory;
 
-    heap_base: number;
-    global_base: number;
+    heap_base?: number;
+    global_base?: number;
 
-    video_memory: Uint32Array;
+    video_memory?: Uint32Array;
 
-    width: number;
-    height: number;
+    width: number = 1;
+    height: number = 1;
 
     // private ctx: CanvasRenderingContext2D;
 
     private gl: WebGL2RenderingContext;
-    private texture: WebGLTexture;
+    private texture?: WebGLTexture;
     private program: WebGLProgram;
     private size_location?: WebGLUniformLocation;
     private size_uniform = new Float32Array([1, 1]);
@@ -82,43 +83,13 @@ export class Driver {
     private scale_x: number = 1;
     private scale_y: number = 1;
 
-    constructor(public module: WebAssemblyModule, public canvas: HTMLCanvasElement) {
-        this.memory = module.memory;
-        const exports = module.source.instance.exports;
-        this.heap_base = (exports.__heap_base as WebAssembly.Global).value;
-        this.global_base = (exports.__global_base as WebAssembly.Global).value;
-
-        this.width = (exports.width as Function)() as number;
-        this.height = (exports.height as Function)() as number;
-
-        const pixel_ratio = window.devicePixelRatio;
-        canvas.width = this.width * pixel_ratio;
-        canvas.height = this.height * pixel_ratio;
-        this.size_uniform[0] = this.width;
-        this.size_uniform[1] = this.height;
-
-        this.video_memory = new Uint32Array(this.memory.buffer, this.heap_base, this.width * this.height);
-
-        this.version = exports.version as any;
-        this.update_mouse = exports.update_mouse as any;
-        this.update_button = exports.update_button as any;
-        this.update = exports.update as any;
-
-        (exports.init as Function)(this.heap_base);
-        (exports.start as Function)();
-
-        console.log(`video memory address ${(exports.video_memory_address as Function)()}`);
-
+    constructor(public canvas: HTMLCanvasElement) {
         // prepare display
         const options = { antialias: false } as WebGLContextAttributes;
         const gl = canvas.getContext('webgl2', options)!;
         if (gl == null) throw new Error('webgl2 not supported');
         this.gl = gl;
-
-        this.texture = this.create_texture();
         this.program = this.create_program();
-
-        this.resize(this.width * 2, this.height * 2);
 
         window.addEventListener('keydown', (event: KeyboardEvent) => {
             const keycode = event.keyCode;
@@ -143,13 +114,17 @@ export class Driver {
         })
     }
 
-    version: () => number;
-    private update: (delta_time: number) => void;
-    private update_mouse: (mosue_x: number, mouse_y: number) => void;
-    private update_button: (button: number) => void;
+    version?: () => number;
+    private update?: (delta_time: number) => void;
+    private update_mouse?: (mosue_x: number, mouse_y: number) => void;
+    private update_button?: (button: number) => void;
 
     private create_texture(): WebGLTexture {
         const gl = this.gl;
+        if (this.texture) {
+            gl.deleteTexture(this.texture);
+        }
+
         const texture = gl.createTexture()!;
         const texture_type = gl.TEXTURE_2D;
         gl.bindTexture(texture_type, texture);
@@ -163,14 +138,7 @@ export class Driver {
         gl.texParameteri(texture_type, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(texture_type, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-        gl.texImage2D(texture_type, 0, gl.R32UI, this.width, this.height, 0, gl.RED_INTEGER, gl.UNSIGNED_INT, this.video_memory);
-
-        const vertex = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertex);
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(0);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), gl.STATIC_DRAW);
-
+        gl.texImage2D(texture_type, 0, gl.R32UI, this.width, this.height, 0, gl.RED_INTEGER, gl.UNSIGNED_INT, this.video_memory!);
         return texture;
     }
 
@@ -184,14 +152,19 @@ export class Driver {
 
         this.size_location = gl.getUniformLocation(program, 'u_size')!;
 
+        const vertex = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex);
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(0);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), gl.STATIC_DRAW);
         return program;
     }
 
     private update_texture() {
         const gl = this.gl;
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this.width, this.height, gl.RED_INTEGER, gl.UNSIGNED_INT, this.video_memory);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture!);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, this.width, this.height, gl.RED_INTEGER, gl.UNSIGNED_INT, this.video_memory!);
 
         gl.useProgram(this.program);
         gl.uniform2fv(this.size_location!, this.size_uniform);
@@ -199,13 +172,12 @@ export class Driver {
         gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
-
     tick(delta_time: number): void {
-        if (this.texture == null) return;
+        if (!this.module || !this.texture) return;
         this.update_texture();
-        this.update_mouse(this.mouse_x, this.mouse_y);
-        this.update_button(this.button);
-        this.update(delta_time);
+        this.update_mouse!(this.mouse_x, this.mouse_y);
+        this.update_button!(this.button);
+        this.update!(delta_time);
     }
 
     resize(width: number, height: number) {
@@ -214,6 +186,39 @@ export class Driver {
         this.canvas.style.borderRadius = '6px';
         this.scale_x = width / this.width;
         this.scale_y = height / this.height;
+        this.gl.viewport(0, 0, width, height);
+    }
+
+    load_module(module: WebAssemblyModule) {
+        this.module = module;
+        this.memory = module.memory;
+        const exports = module.source.instance.exports;
+        this.heap_base = (exports.__heap_base as WebAssembly.Global).value;
+        this.global_base = (exports.__global_base as WebAssembly.Global).value;
+
+        this.width = (exports.width as Function)() as number;
+        this.height = (exports.height as Function)() as number;
+
+        const pixel_ratio = window.devicePixelRatio;
+        this.canvas.width = this.width * pixel_ratio;
+        this.canvas.height = this.height * pixel_ratio;
+        this.size_uniform[0] = this.width;
+        this.size_uniform[1] = this.height;
+
+        this.video_memory = new Uint32Array(this.memory.buffer, this.heap_base, this.width * this.height);
+
+        this.version = exports.version as any;
+        this.update_mouse = exports.update_mouse as any;
+        this.update_button = exports.update_button as any;
+        this.update = exports.update as any;
+
+        (exports.init as Function)(this.heap_base);
+        (exports.start as Function)();
+
+        console.log(`video memory address ${(exports.video_memory_address as Function)()}`);
+
+        this.texture = this.create_texture();
+        this.resize(this.width * 2, this.height * 2);
     }
 }
 
