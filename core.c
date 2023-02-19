@@ -30,7 +30,7 @@ void pixel_color_set(u8 x, u8 y, u32 color) {
     instance->video_memory[y * WIDTH + x] = color;
 }
 
-void rect_color_set(u8 x, u8 y, u8 w, u8 h, u32 pixel) {
+void fill_rect(u8 x, u8 y, u8 w, u8 h, u32 pixel) {
     u32* video_memory = instance->video_memory;
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
@@ -39,7 +39,7 @@ void rect_color_set(u8 x, u8 y, u8 w, u8 h, u32 pixel) {
     }
 }
 
-void rect_color_stroke(u8 x, u8 y, u8 w, u8 h, u8 line_width, u32 pixel) {
+void stroke_rect(u8 x, u8 y, u8 w, u8 h, u8 line_width, u32 pixel) {
     u32* video_memory = instance->video_memory;
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {

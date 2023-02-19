@@ -36,7 +36,7 @@ void update(f32 dt) {
     u32 grid_pixel = pixel_pack(16, 16, 16, 255);
     for (u8 y = 0; y < TILE_COUNT_Y; y++) {
         for (u8 x = 0; x < TILE_COUNT_X; x++) {
-            rect_color_stroke(x << 4, y << 4, TILE_SIZE, TILE_SIZE, 1, grid_pixel);
+            stroke_rect(x << 4, y << 4, TILE_SIZE, TILE_SIZE, 1, grid_pixel);
         }
     }
 
@@ -66,5 +66,5 @@ void update(f32 dt) {
     }
 
     u32 player_pixel = pixel_pack(255, 255, 255, 255);
-    rect_color_set(pos_x + ((8 - size_x)), pos_y, size_x, size_y, player_pixel);
+    fill_rect(pos_x + ((8 - size_x)), pos_y, size_x, size_y, player_pixel);
 }

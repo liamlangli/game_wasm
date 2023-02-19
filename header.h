@@ -58,8 +58,8 @@ void            update_button(u16 buttons);
 u32             pixel_pack(u8 r, u8 g, u8 b, u8 d);
 void            screen_clear(u32 pixel);
 void            pixel_color_set(u8 x, u8 y, u32 color);
-void            rect_color_set(u8 x, u8 y, u8 w, u8 h, u32 pixel);
-void            rect_color_stroke(u8 x, u8 y, u8 w, u8 h, u8 line_width, u32 pixel);
+void            fill_rect(u8 x, u8 y, u8 w, u8 h, u32 pixel);
+void            stroke_rect(u8 x, u8 y, u8 w, u8 h, u8 line_width, u32 pixel);
 
 void            sprite_draw(u8 x, u8 y, u8 sprite_index, u8 size, u8 flip);
 // void           palette_set(u16* palette, u8 start, u8 count);
