@@ -186,7 +186,7 @@ export class Driver {
         this.canvas.style.borderRadius = '6px';
         this.scale_x = width / this.width;
         this.scale_y = height / this.height;
-        this.gl.viewport(0, 0, width, height);
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
     load_module(module: WebAssemblyModule) {

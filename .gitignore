@@ -52,6 +52,7 @@ asset/public
 *.zip
 
 # WebAssembly Text Format
+*.wasm
 *.wast
 *.wat
 

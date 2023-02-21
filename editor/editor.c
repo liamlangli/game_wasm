@@ -11,6 +11,18 @@ void fill_round_rect(u8 x, u8 y, u8 w, u8 h, u8 r, u32 pixel)
                 video_memory[(y + i) * WIDTH + x + j] = pixel;
             }
         } else {
+            for (int j = 0; j < w; j++)
+            {
+                if (j >= r && j < w - r) {
+                    video_memory[(y + i) * WIDTH + x + j] = pixel;
+                } else {
+                    u8 dx = j < r ? r - j : j - (w - r);
+                    u8 dy = i < r ? r - i : i - (h - r);
+                    if (dx * dx + dy * dy <= r * r) {
+                        video_memory[(y + i) * WIDTH + x + j] = pixel;
+                    }
+                }
+            }
         }
     }
 }
