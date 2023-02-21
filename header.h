@@ -35,10 +35,17 @@ enum Button {
     FN = 4096,
 };
 
+enum MouseButton {
+    MOUSE_LEFT = 1,
+    MOUSE_CENTER = 2,
+    MOUSE_RIGHT = 4,
+};
+
 typedef struct {
     u32 video_memory[FRAME_BUFFER_SIZE]; // [r, g, b, d] 8 bits per channel
     u16 buttons; // bit set
     u8 mouse[2];
+    u8 mouse_btn;
     f32 trigger[2];
     f32 left_stick[2];
     f32 right_stick[2];
@@ -53,15 +60,15 @@ u64             video_memory_address();
 
 void            update_trigger(f32 l, f32 r);
 void            update_mouse(u8 x, u8 y);
-void            update_button(u16 buttons);
+void            update_button(u16 buttons, u8 mouse_btn);
 
-u32             pixel_pack(u8 r, u8 g, u8 b, u8 d);
+u32             pixel_pack(u8 r, u8 g, u8 b, u8 a);
 void            screen_clear(u32 pixel);
 void            pixel_color_set(u8 x, u8 y, u32 color);
 void            fill_rect(u8 x, u8 y, u8 w, u8 h, u32 pixel);
 void            stroke_rect(u8 x, u8 y, u8 w, u8 h, u8 line_width, u32 pixel);
 
-void            sprite_draw(u8 x, u8 y, u8 sprite_index, u8 size, u8 flip);
+// void            sprite_draw(u8 x, u8 y, u8 sprite_index, u8 size, u8 flip);
 // void           palette_set(u16* palette, u8 start, u8 count);
 // void            palette_copy(u16* palette, u8 start, u8 count);
 

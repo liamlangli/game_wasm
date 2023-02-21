@@ -77,6 +77,8 @@ export class Driver {
     private size_uniform = new Float32Array([1, 1]);
 
     private button: number = 0;
+    private mouse_button: number = 0;
+
     private mouse_x: number = 0;
     private mouse_y: number = 0;
 
@@ -111,13 +113,21 @@ export class Driver {
             const rect = canvas.getBoundingClientRect();
             this.mouse_x = clamp((event.clientX - rect.left) / this.scale_x, 0, this.width);
             this.mouse_y = clamp((event.clientY - rect.top) / this.scale_y, 0, this.height);
-        })
+        });
+
+        window.addEventListener('mousedown', (event: MouseEvent) => {
+            this.mouse_button |= 1 << event.button;
+        });
+
+        window.addEventListener('mouseup', (event: MouseEvent) => {
+            this.mouse_button &= ~(1 << event.button);
+        });
     }
 
     version?: () => number;
     private update?: (delta_time: number) => void;
     private update_mouse?: (mosue_x: number, mouse_y: number) => void;
-    private update_button?: (button: number) => void;
+    private update_button?: (button: number, mouse_button: number) => void;
 
     private create_texture(): WebGLTexture {
         const gl = this.gl;
@@ -176,7 +186,7 @@ export class Driver {
         if (!this.module || !this.texture) return;
         this.update_texture();
         this.update_mouse!(this.mouse_x, this.mouse_y);
-        this.update_button!(this.button);
+        this.update_button!(this.button, this.mouse_button);
         this.update!(delta_time);
     }
 

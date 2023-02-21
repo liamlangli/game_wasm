@@ -64,7 +64,8 @@ void update_mouse(u8 x, u8 y) {
     instance->mouse[1] = y;
 }
 
-void update_button(u16 buttons) {
+void update_button(u16 buttons, u8 mouse_btn) {
     instance->buttons = buttons;
+    instance->mouse_btn = mouse_btn;
 }
 
